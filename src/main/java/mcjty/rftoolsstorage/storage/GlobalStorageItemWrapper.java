@@ -4,6 +4,7 @@ import mcjty.lib.varia.LevelTools;
 import mcjty.rftoolsstorage.RFToolsStorage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -17,10 +18,12 @@ public class GlobalStorageItemWrapper implements IItemHandlerModifiable {
     private NonNullList<ItemStack> emptyHandler = NonNullList.withSize(10, ItemStack.EMPTY);
     private final boolean remote;
     private IStorageListener listener;
+    private Level level;
 
-    public GlobalStorageItemWrapper(@Nonnull StorageInfo info, boolean remote) {
+    public GlobalStorageItemWrapper(@Nonnull StorageInfo info, Level level) {
         this.info = info;
-        this.remote = remote;
+        this.remote = level.isClientSide;
+        this.level = level;
     }
 
     public void setInfo(@Nonnull StorageInfo info) {
@@ -43,7 +46,7 @@ public class GlobalStorageItemWrapper implements IItemHandlerModifiable {
     private void createStorage() {
         if (storage == null && info.uuid() != null) {
             if (!remote) {
-                storage = StorageHolder.get(LevelTools.getOverworld()).getOrCreateStorageEntry(info.uuid(), info.size(), info.createdBy());
+                storage = StorageHolder.get(this.level).getOrCreateStorageEntry(info.uuid(), info.size(), info.createdBy());
             }
         }
     }
@@ -85,7 +88,7 @@ public class GlobalStorageItemWrapper implements IItemHandlerModifiable {
                     listener.onContentsChanged(storage.getVersion(), slot);
                 }
             }
-            StorageHolder.get(LevelTools.getOverworld()).save();
+            StorageHolder.get(this.level).save();
         }
     }
 

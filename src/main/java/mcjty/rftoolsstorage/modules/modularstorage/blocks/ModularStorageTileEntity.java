@@ -39,6 +39,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static mcjty.rftoolsstorage.modules.modularstorage.blocks.ModularStorageContainer.SLOT_FILTER_MODULE;
@@ -399,7 +400,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements IInve
     private IItemHandlerModifiable createGlobalHandler() {
         StorageInfo info = getStorageInfo();
         if (globalWrapper == null) {
-            globalWrapper = new GlobalStorageItemWrapper(info, level.isClientSide) {
+            globalWrapper = new GlobalStorageItemWrapper(info, Objects.requireNonNull(level))
+            {
                 @Override
                 public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                     boolean rc = super.isItemValid(slot, stack);

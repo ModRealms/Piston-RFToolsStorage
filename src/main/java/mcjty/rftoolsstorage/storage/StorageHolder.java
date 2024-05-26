@@ -1,10 +1,13 @@
 package mcjty.rftoolsstorage.storage;
 
+import mcjty.lib.varia.LevelTools;
 import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -30,7 +33,8 @@ public class StorageHolder extends AbstractWorldData<StorageHolder> {
     }
 
     public static StorageHolder get(Level world) {
-        return getData(world, StorageHolder::new, StorageHolder::new, NAME);
+        DimensionDataStorage storage = ((ServerLevel)world).getDataStorage();
+        return storage.computeIfAbsent(StorageHolder::new, StorageHolder::new, NAME);
     }
 
 
